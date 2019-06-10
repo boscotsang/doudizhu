@@ -14,7 +14,7 @@ from doudizhu.compat import is_py3, cmp_to_key
 logging.basicConfig(level=logging.INFO)
 
 
-CARDS = '3-4-5-6-7-8-9-10-J-Q-K-A-2-BJ-CJ'.split('-')
+CARDS = "3-4-5-6-7-8-9-10-J-Q-K-A-2-BJ-CJ".split("-")
 CARD_IDX = {c: w for w, c in enumerate(CARDS)}
 CARDS_NO_JOKERS = CARDS[:-2]
 CARD_PAIR = [[c] * 2 for c in CARDS_NO_JOKERS]
@@ -23,11 +23,11 @@ CARD_FOUR = [[c] * 4 for c in CARDS_NO_JOKERS]
 
 
 def cards2str(cards):
-    return '-'.join(cards)
+    return "-".join(cards)
 
 
 def str2cards(string):
-    return string.split('-')
+    return string.split("-")
 
 
 def str2cardmap(string):
@@ -43,8 +43,7 @@ def str2cardmap(string):
 
 def sort_cards(cards):
     if is_py3:
-        return sorted(cards, key=cmp_to_key(
-            lambda x, y: CARD_IDX[x] - CARD_IDX[y]))
+        return sorted(cards, key=cmp_to_key(lambda x, y: CARD_IDX[x] - CARD_IDX[y]))
     return sorted(cards, cmp=lambda x, y: CARD_IDX[x] - CARD_IDX[y])
 
 
@@ -76,13 +75,13 @@ def enum_solo_chain(length):
     length 是连顺的张数，如5连
     """
     if length < 5 or length > 12:
-        raise ValueError('chain length is in [5,12]')
+        raise ValueError("chain length is in [5,12]")
 
     chain_range = [(5, 8), (12, 1)]
     count = chain_range[0][1] - (length - chain_range[0][0])
 
     def solo_chain_x():
-        return [(cards2str(CARDS[i:i + length]), i) for i in range(count)]
+        return [(cards2str(CARDS[i : i + length]), i) for i in range(count)]
 
     return solo_chain_x
 
@@ -95,13 +94,13 @@ def enum_pair():
 def enum_pair_chain(length):
     """枚举所有的连对"""
     if length < 3 or length > 10:
-        raise ValueError('chain length is in [3,10]')
+        raise ValueError("chain length is in [3,10]")
 
     chain_range = [(3, 10), (10, 3)]
     count = chain_range[0][1] - (length - chain_range[0][0])
 
     def pair_chain_x():
-        solo_chain = [CARDS[i:i + length] for i in range(count)]
+        solo_chain = [CARDS[i : i + length] for i in range(count)]
         pair_chain = []
         for w, sc in enumerate(solo_chain):
             tmp = []
@@ -116,7 +115,7 @@ def enum_pair_chain(length):
 def enum_trio_chain(length):
     """枚举所有的三张及连三"""
     if length < 1 or length > 7:
-        raise ValueError('chain length is in [1,7]')
+        raise ValueError("chain length is in [1,7]")
 
     chain_range = [(1, 13), (6, 7)]
     count = chain_range[0][1] - (length - chain_range[0][0])
@@ -125,7 +124,7 @@ def enum_trio_chain(length):
         count -= 1
 
     def trio_chain_x():
-        solo_chain = [CARDS[i:i + length] for i in range(count)]
+        solo_chain = [CARDS[i : i + length] for i in range(count)]
         trio_chain = []
         for w, sc in enumerate(solo_chain):
             tmp = []
@@ -147,19 +146,19 @@ def enum_trio_solo():
         for card in all_cards:
             put_sorted_cards(result, trio + [card], weight)
 
-    logging.debug('trio_solo: {}'.format(len(result)))
+    logging.debug("trio_solo: {}".format(len(result)))
     return result
 
 
 def enum_trio_solo_chain(length):
     """x 连三连一"""
     if length < 2 or length > 5:
-        raise ValueError('chain length is in [2,5]')
+        raise ValueError("chain length is in [2,5]")
 
     def trio_solo_chain_x():
         result = []
         weight = 0
-        solo_chain = [CARDS[i:i + length] for i in range(13 - length)]
+        solo_chain = [CARDS[i : i + length] for i in range(13 - length)]
         for chain in solo_chain:
             weight += 1
             trio_chain = order_repeat(chain, 3)
@@ -168,17 +167,17 @@ def enum_trio_solo_chain(length):
             # 1. select {BJ, CJ}
             it = itertools.combinations_with_replacement(avail_cards, length - 2)
             for e in it:
-                kicker = list(e) + ['BJ', 'CJ']
+                kicker = list(e) + ["BJ", "CJ"]
                 put_sorted_cards(result, trio_chain + kicker, weight)
             # 2. select BJ
             it = itertools.combinations_with_replacement(avail_cards, length - 1)
             for e in it:
-                kicker = list(e) + ['BJ']
+                kicker = list(e) + ["BJ"]
                 put_sorted_cards(result, trio_chain + kicker, weight)
             # 3. select CJ
             it = itertools.combinations_with_replacement(avail_cards, length - 1)
             for e in it:
-                kicker = list(e) + ['CJ']
+                kicker = list(e) + ["CJ"]
                 put_sorted_cards(result, trio_chain + kicker, weight)
             # 4. do not select {BJ, CJ}
             it = itertools.combinations_with_replacement(avail_cards, length)
@@ -188,7 +187,7 @@ def enum_trio_solo_chain(length):
                 kicker = list(e)
                 put_sorted_cards(result, trio_chain + kicker, weight)
 
-        logging.debug('trio_solo_chain_{}: {}'.format(length, len(result)))
+        logging.debug("trio_solo_chain_{}: {}".format(length, len(result)))
         return result
 
     return trio_solo_chain_x
@@ -197,7 +196,7 @@ def enum_trio_solo_chain(length):
 def enum_trio_pair_chain(length):
     """x 连三连一对"""
     if length < 1 or length > 4:
-        raise ValueError('chain length is in [1,4]')
+        raise ValueError("chain length is in [1,4]")
 
     def check_repeat_num(arr, limit):
         """
@@ -219,7 +218,7 @@ def enum_trio_pair_chain(length):
         if length == 1:
             solo_chain = [[e] for e in CARDS_NO_JOKERS]
         else:
-            solo_chain = [CARDS[i:i + length] for i in range(13 - length)]
+            solo_chain = [CARDS[i : i + length] for i in range(13 - length)]
 
         for chain in solo_chain:
             weight += 1
@@ -237,7 +236,7 @@ def enum_trio_pair_chain(length):
                 kicker = order_repeat(list(e), 2)
                 put_sorted_cards(result, trio_chain + kicker, weight)
 
-        logging.debug('trio_solo_chain_{}: {}'.format(length, len(result)))
+        logging.debug("trio_solo_chain_{}: {}".format(length, len(result)))
         return result
 
     return trio_pair_chain_x
@@ -252,9 +251,9 @@ def enum_four_two_solo():
         all_cards = [card for card in CARDS if card != four[0]]
         it = itertools.combinations_with_replacement(all_cards, 2)
         for e in it:
-            if e not in [('BJ', 'BJ'), ('CJ', 'CJ')]:
+            if e not in [("BJ", "BJ"), ("CJ", "CJ")]:
                 put_sorted_cards(result, four + list(e), weight)
-    logging.debug('four_solo: {}'.format(len(result)))
+    logging.debug("four_solo: {}".format(len(result)))
     return result
 
 
@@ -268,7 +267,7 @@ def enum_four_two_pair():
         it = itertools.combinations_with_replacement(all_cards, 2)
         for e in it:
             put_sorted_cards(result, four + order_repeat(e, 2), weight)
-    logging.debug('four_pair: {}'.format(len(result)))
+    logging.debug("four_pair: {}".format(len(result)))
     return result
 
 
@@ -279,7 +278,7 @@ def enum_bomb():
 
 def enum_rocket():
     """返回王炸"""
-    return [('BJ-CJ', 0)]
+    return [("BJ-CJ", 0)]
 
 
 class Doudizhu(object):
@@ -289,87 +288,200 @@ class Doudizhu(object):
     - 牌型大小比较
     - 可出牌提示
     """
+
     CARD_TYPE = [
-        {'name': 'solo', 'zh_name': u'单牌',
-         'func': enum_solo, 'size': 15},
-        {'name': 'solo_chain_5', 'zh_name': u'顺子5连',
-         'func': enum_solo_chain(5), 'size': 8},
-        {'name': 'solo_chain_6', 'zh_name': u'顺子6连',
-         'func': enum_solo_chain(6), 'size': 7},
-        {'name': 'solo_chain_7', 'zh_name': u'顺子7连',
-         'func': enum_solo_chain(7), 'size': 6},
-        {'name': 'solo_chain_8', 'zh_name': u'顺子8连',
-         'func': enum_solo_chain(8), 'size': 5},
-        {'name': 'solo_chain_9', 'zh_name': u'顺子9连',
-         'func': enum_solo_chain(9), 'size': 4},
-        {'name': 'solo_chain_10', 'zh_name': u'顺子10连',
-         'func': enum_solo_chain(10), 'size': 3},
-        {'name': 'solo_chain_11', 'zh_name': u'顺子11连',
-         'func': enum_solo_chain(11), 'size': 2},
-        {'name': 'solo_chain_12', 'zh_name': u'顺子12连',
-         'func': enum_solo_chain(12), 'size': 1},
-
-        {'name': 'pair', 'zh_name': u'对子',
-         'func': enum_pair, 'size': 13},
-        {'name': 'pair_chain_3', 'zh_name': u'连对3连',
-         'func': enum_pair_chain(3), 'size': 10},
-        {'name': 'pair_chain_4', 'zh_name': u'连对4连',
-         'func': enum_pair_chain(4), 'size': 9},
-        {'name': 'pair_chain_5', 'zh_name': u'连对5连',
-         'func': enum_pair_chain(5), 'size': 8},
-        {'name': 'pair_chain_6', 'zh_name': u'连对6连',
-         'func': enum_pair_chain(6), 'size': 7},
-        {'name': 'pair_chain_7', 'zh_name': u'连对7连',
-         'func': enum_pair_chain(7), 'size': 6},
-        {'name': 'pair_chain_8', 'zh_name': u'连对8连',
-         'func': enum_pair_chain(8), 'size': 5},
-        {'name': 'pair_chain_9', 'zh_name': u'连对9连',
-         'func': enum_pair_chain(9), 'size': 4},
-        {'name': 'pair_chain_10', 'zh_name': u'连对10连',
-         'func': enum_pair_chain(10), 'size': 3},
-
-        {'name': 'trio', 'zh_name': u'三张',
-         'func': enum_trio_chain(1), 'size': 13},
-        {'name': 'trio_chain_2', 'zh_name': u'连三2连',
-         'func': enum_trio_chain(2), 'size': 11},
-        {'name': 'trio_chain_3', 'zh_name': u'连三3连',
-         'func': enum_trio_chain(3), 'size': 10},
-        {'name': 'trio_chain_4', 'zh_name': u'连三4连',
-         'func': enum_trio_chain(4), 'size': 9},
-        {'name': 'trio_chain_5', 'zh_name': u'连三5连',
-         'func': enum_trio_chain(5), 'size': 8},
-        {'name': 'trio_chain_6', 'zh_name': u'连三6连',
-         'func': enum_trio_chain(6), 'size': 7},
-
-        {'name': 'trio_solo', 'zh_name': u'三带一',
-         'func': enum_trio_solo, 'size': 182},
-        {'name': 'trio_solo_chain_2', 'zh_name': u'连三带一2连',
-         'func': enum_trio_solo_chain(2), 'size': 979},
-        {'name': 'trio_solo_chain_3', 'zh_name': u'连三带一3连',
-         'func': enum_trio_solo_chain(3), 'size': 3400},
-        {'name': 'trio_solo_chain_4', 'zh_name': u'连三带一4连',
-         'func': enum_trio_solo_chain(4), 'size': 7830},
-        {'name': 'trio_solo_chain_5', 'zh_name': u'连三带一5连',
-         'func': enum_trio_solo_chain(5), 'size': 12512},
-
-        {'name': 'trio_pair', 'zh_name': u'三带一对',
-         'func': enum_trio_pair_chain(1), 'size': 156},
-        {'name': 'trio_pair_chain_2', 'zh_name': u'连三带一对2连',
-         'func': enum_trio_pair_chain(2), 'size': 726},
-        {'name': 'trio_pair_chain_3', 'zh_name': u'连三带一对3连',
-         'func': enum_trio_pair_chain(3), 'size': 2100},
-        {'name': 'trio_pair_chain_4', 'zh_name': u'连三带一对4连',
-         'func': enum_trio_pair_chain(4), 'size': 3726},
-
-        {'name': 'four_two_solo', 'zh_name': u'四带二单',
-         'func': enum_four_two_solo, 'size': 1339},
-        {'name': 'four_two_pair', 'zh_name': u'四带二对',
-         'func': enum_four_two_pair, 'size': 1014},
-
-        {'name': 'bomb', 'zh_name': u'炸弹',
-         'func': enum_bomb, 'size': 13},
-        {'name': 'rocket', 'zh_name': u'王炸',
-         'func': enum_rocket, 'size': 1},
+        {"name": "solo", "zh_name": u"单牌", "func": enum_solo, "size": 15},
+        {
+            "name": "solo_chain_5",
+            "zh_name": u"顺子5连",
+            "func": enum_solo_chain(5),
+            "size": 8,
+        },
+        {
+            "name": "solo_chain_6",
+            "zh_name": u"顺子6连",
+            "func": enum_solo_chain(6),
+            "size": 7,
+        },
+        {
+            "name": "solo_chain_7",
+            "zh_name": u"顺子7连",
+            "func": enum_solo_chain(7),
+            "size": 6,
+        },
+        {
+            "name": "solo_chain_8",
+            "zh_name": u"顺子8连",
+            "func": enum_solo_chain(8),
+            "size": 5,
+        },
+        {
+            "name": "solo_chain_9",
+            "zh_name": u"顺子9连",
+            "func": enum_solo_chain(9),
+            "size": 4,
+        },
+        {
+            "name": "solo_chain_10",
+            "zh_name": u"顺子10连",
+            "func": enum_solo_chain(10),
+            "size": 3,
+        },
+        {
+            "name": "solo_chain_11",
+            "zh_name": u"顺子11连",
+            "func": enum_solo_chain(11),
+            "size": 2,
+        },
+        {
+            "name": "solo_chain_12",
+            "zh_name": u"顺子12连",
+            "func": enum_solo_chain(12),
+            "size": 1,
+        },
+        {"name": "pair", "zh_name": u"对子", "func": enum_pair, "size": 13},
+        {
+            "name": "pair_chain_3",
+            "zh_name": u"连对3连",
+            "func": enum_pair_chain(3),
+            "size": 10,
+        },
+        {
+            "name": "pair_chain_4",
+            "zh_name": u"连对4连",
+            "func": enum_pair_chain(4),
+            "size": 9,
+        },
+        {
+            "name": "pair_chain_5",
+            "zh_name": u"连对5连",
+            "func": enum_pair_chain(5),
+            "size": 8,
+        },
+        {
+            "name": "pair_chain_6",
+            "zh_name": u"连对6连",
+            "func": enum_pair_chain(6),
+            "size": 7,
+        },
+        {
+            "name": "pair_chain_7",
+            "zh_name": u"连对7连",
+            "func": enum_pair_chain(7),
+            "size": 6,
+        },
+        {
+            "name": "pair_chain_8",
+            "zh_name": u"连对8连",
+            "func": enum_pair_chain(8),
+            "size": 5,
+        },
+        {
+            "name": "pair_chain_9",
+            "zh_name": u"连对9连",
+            "func": enum_pair_chain(9),
+            "size": 4,
+        },
+        {
+            "name": "pair_chain_10",
+            "zh_name": u"连对10连",
+            "func": enum_pair_chain(10),
+            "size": 3,
+        },
+        {"name": "trio", "zh_name": u"三张", "func": enum_trio_chain(1), "size": 13},
+        {
+            "name": "trio_chain_2",
+            "zh_name": u"连三2连",
+            "func": enum_trio_chain(2),
+            "size": 11,
+        },
+        {
+            "name": "trio_chain_3",
+            "zh_name": u"连三3连",
+            "func": enum_trio_chain(3),
+            "size": 10,
+        },
+        {
+            "name": "trio_chain_4",
+            "zh_name": u"连三4连",
+            "func": enum_trio_chain(4),
+            "size": 9,
+        },
+        {
+            "name": "trio_chain_5",
+            "zh_name": u"连三5连",
+            "func": enum_trio_chain(5),
+            "size": 8,
+        },
+        {
+            "name": "trio_chain_6",
+            "zh_name": u"连三6连",
+            "func": enum_trio_chain(6),
+            "size": 7,
+        },
+        {"name": "trio_solo", "zh_name": u"三带一", "func": enum_trio_solo, "size": 182},
+        {
+            "name": "trio_solo_chain_2",
+            "zh_name": u"连三带一2连",
+            "func": enum_trio_solo_chain(2),
+            "size": 979,
+        },
+        {
+            "name": "trio_solo_chain_3",
+            "zh_name": u"连三带一3连",
+            "func": enum_trio_solo_chain(3),
+            "size": 3400,
+        },
+        {
+            "name": "trio_solo_chain_4",
+            "zh_name": u"连三带一4连",
+            "func": enum_trio_solo_chain(4),
+            "size": 7830,
+        },
+        {
+            "name": "trio_solo_chain_5",
+            "zh_name": u"连三带一5连",
+            "func": enum_trio_solo_chain(5),
+            "size": 12512,
+        },
+        {
+            "name": "trio_pair",
+            "zh_name": u"三带一对",
+            "func": enum_trio_pair_chain(1),
+            "size": 156,
+        },
+        {
+            "name": "trio_pair_chain_2",
+            "zh_name": u"连三带一对2连",
+            "func": enum_trio_pair_chain(2),
+            "size": 726,
+        },
+        {
+            "name": "trio_pair_chain_3",
+            "zh_name": u"连三带一对3连",
+            "func": enum_trio_pair_chain(3),
+            "size": 2100,
+        },
+        {
+            "name": "trio_pair_chain_4",
+            "zh_name": u"连三带一对4连",
+            "func": enum_trio_pair_chain(4),
+            "size": 3726,
+        },
+        {
+            "name": "four_two_solo",
+            "zh_name": u"四带二单",
+            "func": enum_four_two_solo,
+            "size": 1339,
+        },
+        {
+            "name": "four_two_pair",
+            "zh_name": u"四带二对",
+            "func": enum_four_two_pair,
+            "size": 1014,
+        },
+        {"name": "bomb", "zh_name": u"炸弹", "func": enum_bomb, "size": 13},
+        {"name": "rocket", "zh_name": u"王炸", "func": enum_rocket, "size": 1},
     ]
 
     """
@@ -394,19 +506,19 @@ class Doudizhu(object):
             return
         Doudizhu.INIT_FLAG = True
         for ct in Doudizhu.CARD_TYPE:
-            rst = ct['func']()
-            if len(rst) != ct['size']:
+            rst = ct["func"]()
+            if len(rst) != ct["size"]:
                 logging.error(ct)
             Doudizhu.TOTAL += len(rst)
 
-            card_type = ct['name']
+            card_type = ct["name"]
             Doudizhu.TYPE_CARDS[card_type] = {}
             for item in rst:
                 cards, weight = item
                 if cards not in Doudizhu.DATA:
-                    Doudizhu.DATA[cards] = [(ct['name'], weight)]
+                    Doudizhu.DATA[cards] = [(ct["name"], weight)]
                 else:
-                    Doudizhu.DATA[cards].append((ct['name'], weight))
+                    Doudizhu.DATA[cards].append((ct["name"], weight))
 
                 if weight not in Doudizhu.TYPE_CARDS[card_type]:
                     Doudizhu.TYPE_CARDS[card_type][weight] = [cards]
@@ -418,8 +530,7 @@ class Doudizhu(object):
     @staticmethod
     def print_multiple_types_cards():
         for cards, value in iter(Doudizhu.DATA.items()):
-            if len(value) > 2 or \
-                    (len(value) > 1 and value[0][0] != value[1][0]):
+            if len(value) > 2 or (len(value) > 1 and value[0][0] != value[1][0]):
                 print(cards, value)
 
     @staticmethod
@@ -432,7 +543,7 @@ class Doudizhu(object):
         sorted_cards = sort_cards(cards)
         value = Doudizhu.DATA.get(cards2str(sorted_cards))
         if value is None:
-            return False, ValueError('invalid card type')
+            return False, ValueError("invalid card type")
 
         return True, value
 
@@ -447,14 +558,14 @@ class Doudizhu(object):
         if type_x[0] == type_y[0]:
             return type_x[1] - type_y[1]
         else:
-            if type_x[0] == 'rocket':
+            if type_x[0] == "rocket":
                 return 1
-            elif type_y[0] == 'rocket':
+            elif type_y[0] == "rocket":
                 return -1
-            elif type_x[0] == 'bomb':
+            elif type_x[0] == "bomb":
                 return 1
 
-        return ValueError('Can not compare card type')
+        return ValueError("Can not compare card type")
 
     @staticmethod
     def cards_greater(cards_x, cards_y):
@@ -464,11 +575,11 @@ class Doudizhu(object):
         """
         ok, type_x = Doudizhu.check_card_type(cards_x)
         if not ok:
-            return False, '{}: {}'.format(cards_x, type_x)
+            return False, "{}: {}".format(cards_x, type_x)
 
         ok, type_y = Doudizhu.check_card_type(cards_y)
         if not ok:
-            return False, '{}: {}'.format(cards_y, type_y)
+            return False, "{}: {}".format(cards_y, type_y)
 
         for tx in type_x:
             for ty in type_y:
@@ -502,32 +613,34 @@ class Doudizhu(object):
         只返回一次'5-5-5-5-6-6-6-6',
         {'bomb': ['5-5-5-5', '6-6-6-6'], 'four_two_pair': ['5-5-5-5-6-6-6-6']}
         """
-        ok, target_type = Doudizhu.check_card_type(cards_target)
-        if not ok:
-            logging.error('{}: {}'.format(cards_target, target_type))
-            return {}
+        if cards_target == "":
+            target_type = [(t["name"], -1) for t in Doudizhu.CARD_TYPE]
+        else:
+            ok, target_type = Doudizhu.check_card_type(cards_target)
+            if not ok:
+                logging.error("{}: {}".format(cards_target, target_type))
+                return {}
 
-        # 对target_type去重，保留同type中weight最大的
-        tmp_dict = {}
-        for card_type, weight in target_type:
-            if card_type not in tmp_dict or weight > tmp_dict[card_type]:
-                tmp_dict[card_type] = weight
-        target_type = [(k, v) for k, v in iter(tmp_dict.items())]
+            # 对target_type去重，保留同type中weight最大的
+            tmp_dict = {}
+            for card_type, weight in target_type:
+                if card_type not in tmp_dict or weight > tmp_dict[card_type]:
+                    tmp_dict[card_type] = weight
+            target_type = [(k, v) for k, v in iter(tmp_dict.items())]
 
         # 按牌型大小依次判断是否可用bomb, rocket
-        if target_type[0][0] != 'rocket':
-            if target_type[0][0] != 'bomb':
-                target_type.append(('bomb', -1))
-            target_type.append(('rocket', -1))
-        elif target_type[0][0] != 'bomb':
-            target_type.append(('bomb', -1))
+        if target_type[0][0] != "rocket":
+            if target_type[0][0] != "bomb":
+                target_type.append(("bomb", -1))
+            target_type.append(("rocket", -1))
+        elif target_type[0][0] != "bomb":
+            target_type.append(("bomb", -1))
 
-        logging.debug('target_type: {}'.format(target_type))
+        logging.debug("target_type: {}".format(target_type))
         candidate_cardmap = str2cardmap(cards_candidate)
         cards_gt = {}
         for card_type, weight in target_type:
-            weight_gt = [w for w in Doudizhu.TYPE_CARDS[card_type].keys()
-                         if w > weight]
+            weight_gt = [w for w in Doudizhu.TYPE_CARDS[card_type].keys() if w > weight]
             if card_type not in cards_gt:
                 cards_gt[card_type] = []
             logging.debug(weight_gt)
@@ -535,8 +648,10 @@ class Doudizhu(object):
             for w in sorted(weight_gt):
                 for w_cards in Doudizhu.TYPE_CARDS[card_type][w]:
                     w_cardmap = str2cardmap(w_cards)
-                    if Doudizhu.cards_contain(candidate_cardmap, w_cardmap) \
-                            and w_cards not in cards_gt[card_type]:
+                    if (
+                        Doudizhu.cards_contain(candidate_cardmap, w_cardmap)
+                        and w_cards not in cards_gt[card_type]
+                    ):
                         cards_gt[card_type].append(w_cards)
             if not cards_gt[card_type]:
                 cards_gt.pop(card_type)
