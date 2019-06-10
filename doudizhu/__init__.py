@@ -67,6 +67,8 @@ def check_card_type(cards):
     cards: Card类型的列表
     return: bool, type
     """
+    if len(cards) == 0:
+        return True, "pass"
     cards_no_suit = Card.cards_without_suit(cards)
     return Doudizhu.check_card_type(cards_no_suit)
 
@@ -93,9 +95,8 @@ def list_greater_cards(cards_target, cards_candidate):
     def render_suit(cards, candidate):
         result = set()
         candidate = set(candidate)
-        for card in cards.split('-'):
-            cards_suit = [Card.new(cs) for cs in
-                          Card.card_rank_to_real_card(card)]
+        for card in cards.split("-"):
+            cards_suit = [Card.new(cs) for cs in Card.card_rank_to_real_card(card)]
             for card_int in cards_suit:
                 if card_int in candidate and card_int not in result:
                     result.add(card_int)
@@ -113,5 +114,4 @@ def list_greater_cards(cards_target, cards_candidate):
     return result
 
 
-__all__ = ['Card', 'new_game', 'check_card_type',
-           'cards_greater', 'list_greater_cards']
+__all__ = ["Card", "new_game", "check_card_type", "cards_greater", "list_greater_cards"]

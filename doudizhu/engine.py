@@ -540,8 +540,6 @@ class Doudizhu(object):
             cards = str2cards(cards)
         if not isinstance(cards, list):
             return False, None
-        if len(cards) == 0:
-            return True, "pass"
         sorted_cards = sort_cards(cards)
         value = Doudizhu.DATA.get(cards2str(sorted_cards))
         if value is None:
