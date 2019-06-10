@@ -68,7 +68,7 @@ def check_card_type(cards):
     return: bool, type
     """
     if len(cards) == 0:
-        return True, "pass"
+        return True, ("pass", 0)
     cards_no_suit = Card.cards_without_suit(cards)
     return Doudizhu.check_card_type(cards_no_suit)
 
