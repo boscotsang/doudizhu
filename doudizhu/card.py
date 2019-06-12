@@ -167,5 +167,4 @@ class Card(object):
             output += Card.int_to_pretty_str(c)
             if i != len(card_ints) - 1:
                 output += ","
-
-        print(output)
+        return output
