@@ -147,7 +147,7 @@ class Card(object):
 
         r = Card.STR_RANKS[rank_int]
 
-        return " [ {} {} ]".format(r, s)
+        return "{}{}".format(r, s)
 
     @staticmethod
     def print_pretty_card(card_int):
@@ -162,6 +162,8 @@ class Card(object):
         Expects a list of cards in integer form.
         """
         output = " "
+        card_ints = sorted(card_ints)
+        card_ints = sorted(card_ints, key=lambda x: Card.get_rank_int(x))
         for i in range(len(card_ints)):
             c = card_ints[i]
             output += Card.int_to_pretty_str(c)
