@@ -656,3 +656,47 @@ class Doudizhu(object):
             if not cards_gt[card_type]:
                 cards_gt.pop(card_type)
         return cards_gt
+
+    @staticmethod
+    def list_greater_cards_type(cards_target, cards_candidate):
+        if cards_target == "":
+            target_type = [(t["name"], -1) for t in Doudizhu.CARD_TYPE]
+        else:
+            ok, target_type = Doudizhu.check_card_type(cards_target)
+            if not ok:
+                logging.error("{}: {}".format(cards_target, target_type))
+                return {}
+
+            # 对target_type去重，保留同type中weight最大的
+            tmp_dict = {}
+            for card_type, weight in target_type:
+                if card_type not in tmp_dict or weight > tmp_dict[card_type]:
+                    tmp_dict[card_type] = weight
+            target_type = [(k, v) for k, v in iter(tmp_dict.items())]
+
+        # 按牌型大小依次判断是否可用bomb, rocket
+        if target_type[0][0] != "rocket":
+            if target_type[0][0] != "bomb":
+                target_type.append(("bomb", -1))
+            target_type.append(("rocket", -1))
+        elif target_type[0][0] != "bomb":
+            target_type.append(("bomb", -1))
+
+        logging.debug("target_type: {}".format(target_type))
+        candidate_cardmap = str2cardmap(cards_candidate)
+        cards_gt = []
+        for card_type, weight in target_type:
+            weight_gt = [w for w in Doudizhu.TYPE_CARDS[card_type].keys() if w > weight]
+            if card_type not in cards_gt:
+                logging.debug(weight_gt)
+                logging.debug(candidate_cardmap)
+                done = False
+                for w in sorted(weight_gt):
+                    if not done:
+                        for w_cards in Doudizhu.TYPE_CARDS[card_type][w]:
+                            w_cardmap = str2cardmap(w_cards)
+                            if Doudizhu.cards_contain(candidate_cardmap, w_cardmap):
+                                cards_gt.append(card_type)
+                                done = True
+                                break
+        return cards_gt

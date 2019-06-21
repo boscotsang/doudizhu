@@ -114,4 +114,11 @@ def list_greater_cards(cards_target, cards_candidate):
     return result
 
 
+def list_greater_cards_type(cards_target, cards_candidate):
+    ct_no_suit = Card.cards_without_suit(cards_target)
+    cc_no_suit = Card.cards_without_suit(cards_candidate)
+    cards_gt = Doudizhu.list_greater_cards_type(ct_no_suit, cc_no_suit)
+    return cards_gt
+
+
 __all__ = ["Card", "new_game", "check_card_type", "cards_greater", "list_greater_cards"]
