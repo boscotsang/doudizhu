@@ -633,8 +633,6 @@ class Doudizhu(object):
             if target_type[0][0] != "bomb":
                 target_type.append(("bomb", -1))
             target_type.append(("rocket", -1))
-        elif target_type[0][0] != "bomb":
-            target_type.append(("bomb", -1))
 
         logging.debug("target_type: {}".format(target_type))
         candidate_cardmap = str2cardmap(cards_candidate)
@@ -679,8 +677,6 @@ class Doudizhu(object):
             if target_type[0][0] != "bomb":
                 target_type.append(("bomb", -1))
             target_type.append(("rocket", -1))
-        elif target_type[0][0] != "bomb":
-            target_type.append(("bomb", -1))
 
         logging.debug("target_type: {}".format(target_type))
         candidate_cardmap = str2cardmap(cards_candidate)
